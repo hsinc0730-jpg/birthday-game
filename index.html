@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生日特製：命運賽道挑戰</title>
+    <style>
+        /* 科技感綠色主題設計 */
+        :root {
+            --primary-green: #00ff41;
+            --dark-bg: #0a0a0a;
+            --card-bg: #1a1a1a;
+            --text-color: #e0e0e0;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        #game-container {
+            width: 90%;
+            max-width: 600px;
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--primary-green);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+            text-align: center;
+            position: relative;
+        }
+
+        /* 科技感標題 */
+        h1 {
+            color: var(--primary-green);
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+            margin-bottom: 1.5rem;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .options-container {
+            display: grid;
+            gap: 1rem;
+        }
+
+        button {
+            background: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--primary-green);
+            padding: 1rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            background: rgba(0, 255, 65, 0.1);
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* 隱藏區塊 */
+        .hidden { display: none; }
+
+        /* 結局樣式 */
+        #result-screen h2 {
+            color: var(--primary-green);
+            font-size: 1.8rem;
+        }
+
+        .card-content {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+            border-left: 4px solid var(--primary-green);
+            text-align: left;
+            line-height: 1.8;
+        }
+
+        /* 進度條 */
+        .progress {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="game-content">
+        </div>
+</div>
+
+<script>
+    // 遊戲狀態儲存
+    let currentStep = 'start';
+    let track = ''; // 選擇的賽道
+    let scores = { quiet: 0, active: 0, heal: 0, lively: 0 };
+
+    const content = {
+        start: {
+            title: "SYSTEM START",
+            text: "如果今天沒有任何限制，你會選擇先踏上的一條賽道是？",
+            options: [
+                { text: "🏃 運動賽道", next: 'sport_2', track: 'sport' },
+                { text: "🧋 飲料賽道", next: 'drink_2', track: 'drink' },
+                { text: "🎧 音樂賽道", next: 'music_2', track: 'music' }
+            ]
+        },
+        // 運動賽道
+        sport_2: {
+            text: "運動對你來說，更像是？",
+            options: [
+                { text: "🌊 游泳：沉進自己的世界，節奏由自己掌控", next: 'sport_3', score: { quiet: 2 } },
+                { text: "🎾 網球：一來一往，有對手才刺激", next: 'sport_3', score: { active: 1, lively: 1 } },
+                { text: "🏀 籃球：氣氛很重要，和大家一起燃起來", next: 'sport_3', score: { active: 2 } }
+            ]
+        },
+        sport_3: {
+            text: "假設比分不利，你會選擇：",
+            options: [
+                { text: "冷靜調整節奏", next: 'ladder', score: { quiet: 1 } },
+                { text: "想辦法打一個漂亮反擊", next: 'ladder', score: { active: 1 } },
+                { text: "鼓動氣氛、帶動士氣", next: 'ladder', score: { lively: 1 } }
+            ]
+        },
+        // 飲料賽道
+        drink_2: {
+            text: "你今天想喝這杯飲料的原因是？",
+            options: [
+                { text: "50嵐 / 八曜：我想要穩定、安全、不踩雷", next: 'drink_3', score: { quiet: 1, heal: 1 } },
+                { text: "一沐日 / 大院子：我想要療癒、被照顧的感覺", next: 'drink_3', score: { heal: 2 } },
+                { text: "再睡五分鐘 / 特好喝：我想要有趣、被驚喜到", next: 'drink_3', score: { lively: 2 } }
+            ]
+        },
+        drink_3: {
+            text: "你通常什麼時候最想喝飲料？",
+            options: [
+                { text: "忙到爆炸的時候", next: 'ladder', score: { heal: 1 } },
+                { text: "心情有點低落的時候", next: 'ladder', score: { quiet: 1 } },
+                { text: "想犒賞自己的時候", next: 'ladder', score: { lively: 1 } }
+            ]
+        },
+        // 音樂賽道
+        music_2: {
+            text: "你最常在哪種時候聽音樂？",
+            options: [
+                { text: "Decajoins / 落日飛車：深夜、發呆", next: 'music_3', score: { quiet: 2 } },
+                { text: "草東 / 美秀集團：情緒很滿、需要宣洩", next: 'music_3', score: { active: 2 } },
+                { text: "椅子樂團 / 楊世暄：日常背景、陪伴感", next: 'music_3', score: { heal: 2 } }
+            ]
+        },
+        music_3: {
+            text: "如果只能留下一首歌，你希望它是？",
+            options: [
+                { text: "會讓我冷靜下來的", next: 'ladder', score: { quiet: 1 } },
+                { text: "會讓我被理解的", next: 'ladder', score: { heal: 1 } },
+                { text: "會讓我想笑的", next: 'ladder', score: { lively: 1 } }
+            ]
+        },
+        // 爬梯子關卡
+        ladder: {
+            title: "命運梯子 DESTINY LADDER",
+            text: "你一路走到這裡，其實每一個選擇都在悄悄決定你會走向哪一種結局。<br><br>請按下同步按鈕，生成最終生日報告。",
+            options: [
+                { text: "⚡ 同步命運數據 ⚡", next: 'result' }
+            ]
+        }
+    };
+
+    function renderStep(stepKey) {
+        const stepData = content[stepKey];
+        const container = document.getElementById('game-content');
+        
+        let html = `
+            <h1>${stepData.title || 'LEVEL'}</h1>
+            <p class="question-text">${stepData.text}</p>
+            <div class="options-container">
+        `;
+
+        stepData.options.forEach(opt => {
+            html += `<button onclick="handleChoice('${opt.next}', '${opt.track || ''}', ${JSON.stringify(opt.score || {})})">${opt.text}</button>`;
+        });
+
+        html += `</div>`;
+        container.innerHTML = html;
+    }
+
+    window.handleChoice = function(nextStep, selectedTrack, score) {
+        if(selectedTrack) track = selectedTrack;
+        
+        // 累積分數
+        for (let key in score) {
+            scores[key] += score[key];
+        }
+
+        if(nextStep === 'result') {
+            showResult();
+        } else {
+            renderStep(nextStep);
+        }
+    };
+
+    function showResult() {
+        const container = document.getElementById('game-content');
+        let resultTitle = "";
+        let resultContent = "";
+
+        // 簡單邏輯判定結局
+        if (scores.quiet >= 3) {
+            resultTitle = "🎂 安靜陪伴型生日";
+            resultContent = "生日快樂！你是個內心細膩的人。我們為你準備了一個只屬於你的安靜時刻，沒有喧囂，只有最懂你的陪伴。";
+        } else if (scores.lively >= 2 && scores.active >= 1) {
+            resultTitle = "🎉 熱鬧驚喜型生日";
+            resultContent = "驚喜預警！你以為今天很普通嗎？其實大家早就佈好局了，準備好迎接這份熱情了嗎？";
+        } else if (scores.heal >= 2) {
+            resultTitle = "🧋 被照顧型生日";
+            resultContent = "親愛的，今天你不需要努力。因為有人想好好照顧你，把所有的甜度都加給你！";
+        } else if (track === 'music') {
+            resultTitle = "🎧 懂你的人型生日";
+            resultContent = "有些人，也許不常聯絡，但一直聽著你在聽的歌。這張卡片代表我們一直都在。";
+        } else if (track === 'sport') {
+            resultTitle = "🏃 一起前進型生日";
+            resultContent = "人生就像賽道，感謝你一直這麼努力。今年我們不只想祝你生日快樂，更想陪你一起跑下去。";
+        } else {
+            resultTitle = "💌 專屬你型生日";
+            resultContent = "這是一個隱藏結局。因為你的獨特性，我們準備了這份最專屬的祝福，只有你能開啟。";
+        }
+
+        container.innerHTML = `
+            <h1>MISSION COMPLETE</h1>
+            <div id="result-screen">
+                <h2>${resultTitle}</h2>
+                <div class="card-content">
+                    ${resultContent}
+                    <br><br>
+                    <strong>Happy Birthday! 🎈</strong>
+                </div>
+            </div>
+            <button onclick="location.reload()" style="margin-top:2rem">重新開始</button>
+        `;
+    }
+
+    // 初始化第一關
+    renderStep('start');
+
+</script>
+
+</body>
+</html>
