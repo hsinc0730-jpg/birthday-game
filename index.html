@@ -152,15 +152,15 @@
         if (state === 'cover') {
             ui.innerHTML = `
                 <div class="welcome-anim">WELCOME_TO_STATION...</div>
-                <h1 class="main-title">~歡迎來到餓了吧~</h1>
-                <p style="color:var(--neon-green); font-size:0.95rem; margin-bottom:1.5rem;">🎮 1.21限定28hr・闖關測驗</p>
-                <p style="line-height:1.7; font-size:0.9rem;">開啟這多重賽道 × 命運爬梯<br><span style="color:#888;">⚠️ 請誠實回答~並耐心地玩到最後一頁ㄛ</span></p>
-                <div style="margin:2rem 0; letter-spacing:2px; font-weight:bold;">Take your mark</div>
+                <h1 class="main-title">歡迎來到餓了吧~</h1>
+                <p style="color:var(--neon-green); font-size:0.95rem; margin-bottom:1.5rem;">🎮 1.21今日限定28hr・闖關測驗</p>
+                <p style="line-height:1.7; font-size:0.9rem;">請帶著愉悅輕鬆的心情開啟這個 多重賽道 × 命運爬梯<br><span style="color:#888;">⚠️ 請誠實回答~並耐心地玩到最後一頁ㄛ</span></p>
+                <div style="margin:2rem 0; letter-spacing:2px; font-weight:bold;">Take your mark!Ready~</div>
                 <button class="option-btn" style="text-align:center" onclick="render('name')">[ GO! ]</button>
             `;
         } else if (state === 'name') {
             ui.innerHTML = `
-                <h2>嗨~請嗨~請問要怎麼稱呼你呢?</h2>
+                <h2>嗨~請問要怎麼稱呼你呢?</h2>
                 <input type="text" id="nIn" class="input-field" placeholder="ID_IDENTIFICATION...">
                 <button class="option-btn" style="text-align:center" onclick="saveN()">[ START ]</button>
             `;
@@ -179,13 +179,13 @@
             const reviewStr = history.map(h => h.split(' ')[0]).join('、');
             ui.innerHTML = `
                 <div style="color:var(--neon-green); font-size:0.7rem;">ANALYSIS_COMPLETE</div>
-                <div style="margin-top:1.5rem; text-align:center;">${userName}，測驗結果分析：你是...</div>
+                <div style="margin-top:1.5rem; text-align:center;">嗨${userName}，測驗結果分析：你是...</div>
                 <div class="result-name-big">${res.name}</div>
                 <p style="line-height:1.8; color:#ccc; border-top:1px solid #333; padding-top:1rem;">${res.desc}</p>
                 
                 <div class="summary-box">
-                    <strong style="color:var(--neon-green);">📊 壽星的作答精采回顧：</strong><br>
-                    在這次測驗中，你選擇了「${reviewStr}」等路徑。這反映出你在面對 5xN 爽約或超哥除蟲時，有著獨特的應對邏輯。
+                    <strong style="color:var(--neon-green);">📊 壽星精彩的作答回顧：</strong><br>
+                    謝謝你的用心作答~在這次測驗中，你選擇了「${reviewStr}」等路徑。
                 </div>
 
                 <div class="summary-box">
@@ -215,4 +215,5 @@
 </script>
 </body>
 </html>
+
 
