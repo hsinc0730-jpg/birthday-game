@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MATRIX: BIRTHDAY CHALLENGE</title>
+    <title>MATRIX: 生日特輯</title>
     <style>
         :root {
             --neon-green: #00ff41;
@@ -44,9 +44,20 @@
             z-index: 10;
         }
 
-        .question-box { animation: slideIn 0.5s ease-out; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+        /* 內容切換動畫 */
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
+        h1.main-title {
+            color: var(--neon-green);
+            font-size: 2.5rem;
+            text-shadow: 0 0 15px rgba(0, 255, 65, 0.7);
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+        }
         h2 { color: var(--neon-green); text-shadow: 0 0 10px rgba(0, 255, 65, 0.5); font-size: 1.2rem; margin-bottom: 1.5rem; line-height: 1.6; }
 
         .btn-grid { display: grid; gap: 1rem; }
@@ -71,6 +82,17 @@
         .progress-container { margin-top: 2rem; height: 2px; background: #222; width: 100%; position: relative; }
         #progress-bar { height: 100%; background: var(--neon-green); width: 0%; transition: 0.5s; box-shadow: 0 0 10px var(--neon-green); }
 
+        .input-name-field {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-top: 1rem;
+            border: 1px solid var(--neon-green);
+            background: #111;
+            color: #fff;
+            font-size: 1.1rem;
+            box-shadow: 0 0 5px rgba(0, 255, 65, 0.3);
+        }
+
         .result-card { text-align: center; }
         .result-name { font-size: 2rem; color: var(--neon-green); margin: 1rem 0; font-weight: bold; }
         .result-desc { line-height: 1.8; color: #bbb; text-align: left; padding: 1rem; border-top: 1px solid #333; }
@@ -86,18 +108,18 @@
 
 <script>
     const questions = [
-        { q: "🍹 如果今天考試滿分，會選以下哪一杯手搖獎勵自己呢？", options: ["八曜牧場307 🥛", "茶湯會金桂觀音珍珠拿鐵 🍵", "林三凍檸茶 🍋", "八曜 柚迷人 🍊", "一沐日桂花粉粿檸檬 🌼", "午後時光的奶茶"] },
-        { q: "😈 如果 5xN 臨時爽約（理由超爛），你最想怎麼懲罰他呢？", options: ["表面沒事～但心裡記一筆 😌", "逼他請飲料，然後當場原諒他 🧋", "發限動讓全世界一起公審 📱"] },
-        { q: "🏝️ 如果被丟到孤島，只能帶一樣東西，你會帶？", options: ["超哥沒有充電的電動牙刷 🪥", "跟吳承恩的情侶檸檬泳褲 🍋", "一碗「安姆士」的招牌養生拌飯 🍚"] },
-        { q: "🎲 猜拳輸了，必須接受一個懲罰，會選哪一個？", options: ["穿全綠套裝一整天 🟢", "兩個禮拜不能喝手搖 🚫", "吳承恩教學跳 3 首女團舞 💃"] },
-        { q: "🌋 以下哪一個事件最有可能讓你火山爆發？", options: ["吳承恩遲到 2 小時還吃 3 小時 ⏰", "超哥做報告一直在睡覺 😴", "車子準備停車被撞到擦傷 🚗"] },
-        { q: "🌙 半夜群組突然叮咚叮咚很吵，你的內心 OS？", options: ["吳承恩又在耍帥，我要拔刀 🔪", "超哥又被公幹了，看戲 😂", "張馨／呂宜甄在約飯局？ 🍽️", "露比在分享美食吧！ 📸"] },
-        { q: "🧋 點手搖的時候，你最不能接受的是哪一個？", options: ["甜度不對 (一分變七分) 🍬", "檸檬品項但檸檬曠課 🍋", "珍珠自動被換成波霸 ⚫"] },
-        { q: "🏊‍♂️ 泳訓的時候最不想游哪一個菜單？", options: ["施教練的菜單＋重訓 💪", "甲組的魔鬼訓練菜單 👿", "4/1 的愚人節菜單 🤡", "帶班當一天全職經理 📋"] },
-        { q: "😱💬 聽到什麼八卦會讓你驚掉下巴？", options: ["吳承恩是蓋 🤯", "超哥深深地愛上你 😍", "聽到自己已熱戀中 💖", "吳承恩密謀向你求婚 💍"] },
-        { q: "🧢 如果今天一定要選一頂泳帽，你會選？", options: ["變成一顆檸檬🍋的泳帽 😆", "有旗的鯊魚泳帽 🦈", "變成一顆網球🎾的泳帽 😎"] },
-        { q: "⚡🏠 如果今天宿舍停電，超哥準備來你們房間，你會……", options: ["一秒鎖門，無情拒絕進入 🔒", "開 20 個超緊瓶蓋才可進入 🫙", "簽下「永久幫忙除蟲」契約 🪳", "門口跳 Overdrive 後進來 🎤"] },
-        { q: "💇✨ 如果必須要挑戰一個新髮型，你會選擇？", options: ["高中兄弟們的平頭髮型 ✂️", "呂宜甄的雙色挑染 🌈", "旺仔同款的美式前刺 🦔", "變身最耀眼的金髮男神 💛"] }
+        { q: "🍹 如果今天考試滿分，會選以下哪一杯手搖獎勵自己呢？", options: ["八曜牧場307 🥛", "茶湯會金桂觀音珍珠拿鐵 🍵🧋", "林三凍檸茶 🍋🧊", "八曜 柚迷人 😍🍊", "一沐日桂花粉粿檸檬 🌼🍋", "午後時光的奶茶 ☕"] },
+        { q: "😈 如果 5xN 臨時爽約（理由超爛），你最想怎麼懲罰他呢？", options: ["表面沒事～但心裡記一筆～下次默默算帳 😌🧾", "逼他請飲料，然後當場原諒他～ 🧋🤝", "發限時動態／Retro 讓全世界知道他爽約～大家一起公審 📱🔥"] },
+        { q: "🏝️ 如果被丟到孤島，只能帶一樣東西，你會帶？", options: ["超哥沒有充電的電動牙刷 🪥⚡", "跟吳承恩的情侶檸檬泳褲 🍋🩳", "一碗「安姆士」的招牌養生拌飯 🍚🥗"] },
+        { q: "🎲 猜拳輸了～願賭服輸的你，如果必須接受一個懲罰，會選哪一個？", options: ["穿全綠套裝一整天 🟢👕", "兩個禮拜不能喝手搖 🚫🧋", "由吳承恩教學，一起跳 3 首女團舞 💃🎶"] },
+        { q: "🌋 以下哪一個事件最有可能讓你火山爆發、心情不好（生氣）？", options: ["吳承恩遲到 2 個小時後一起去吃飯，還吃了 3 個小時 ⏰😤", "跟超哥約好一起做報告，但他都在睡覺，就算叫醒了三秒內還是會再次睡著 😴📄", "車子準備停車的時候被別人撞到擦傷 🚗💥"] },
+        { q: "🌙 半夜群組突然叮咚叮咚很吵～訊息不停歇，你的內心 OS？", options: ["吳承恩是不是又在群組耍帥了，我要拔刀 🔪😠", "超哥感覺又被公幹了，來按笑臉表符看戲 😂🍿", "可能是張馨／呂宜甄在約吃飯局～？ 🍽️👀", "應該是露比在分享好吃的 IG 美食吧！ 📸🍰"] },
+        { q: "🧋 點手搖的時候，你最不能接受的是哪一個？", options: ["甜度不對，一分糖變成七分糖 🍬❌", "點了檸檬品項，但檸檬曠課 🍋🚫", "珍珠自動被換成波霸 ⚫🔄"] },
+        { q: "🏊‍♂️ 泳訓的時候最不想游哪一個菜單？", options: ["施教練的菜單＋重訓 💪🥵", "甲組的魔鬼訓練菜單 👿🔥", "4/1 的愚人節菜單 🤡📅", "帶班當一天全職經理 📋😵"] },
+        { q: "😱💬 聽到什麼八卦會讓你驚掉下巴？", options: ["吳承恩是蓋 🤯🏳️‍🌈", "超哥深深地愛上你 😍💘", "聽到自己已熱戀中 💖🔥", "吳承恩已密謀許久向你求婚 💍😳"] },
+        { q: "🧢 如果今天一定要選一頂泳帽，你會選？", options: ["戴上後直接變成一顆檸檬🍋的泳帽 🍋😆", "有旗的鯊魚泳帽 🦈🚩", "戴上後變成一顆網球🎾的泳帽 🎾😎"] },
+        { q: "⚡🏠 如果今天宿舍停電，超哥準備來你們房間，你會……", options: ["一秒鎖門，無情拒絕超哥進入 🔒😶", "超哥要開 20 個超緊瓶蓋才可進入 🫙💥", "超哥毫不猶豫簽下「永久幫忙除蟲」契約 🪳✍️", "門口跳《Overdrive》副歌後心軟讓他進來 🎤🕺"] },
+        { q: "💇✨ 如果必須要挑戰一個新髮型，你會選擇？", options: ["重返高中和兄弟們的平頭髮型 ✂️😎", "呂宜甄的雙色挑染 🌈🔥", "旺仔同款的美式前刺 🇺🇸🦔", "變身最耀眼的金髮男神 💛👑"] }
     ];
 
     const finalResults = [
@@ -112,52 +134,105 @@
     let currentSession = [];
     let currentIndex = 0;
     let score = 0;
+    let userName = "挑戰者"; // 預設名稱
 
-    function init() {
+    // 遊戲流程狀態
+    let gameState = "cover"; // 'cover', 'nameInput', 'quiz', 'result'
+
+    function initGame() {
+        // 從所有問題中隨機選出 6 題
         currentSession = [...questions].sort(() => Math.random() - 0.5).slice(0, 6);
-        render();
+        currentIndex = 0;
+        score = 0;
+        renderUI();
     }
 
-    function render() {
+    function renderUI() {
         const ui = document.getElementById('game-ui');
-        const progress = (currentIndex / 6) * 100;
-        document.getElementById('progress-bar').style.width = progress + "%";
+        ui.className = 'fade-in'; // 每次渲染都重置動畫
 
-        if (currentIndex >= 6) return showResult();
+        if (gameState === "cover") {
+            ui.innerHTML = `
+                <div style="text-align:center;">
+                    <h1 class="main-title">餓了吧~~</h1>
+                    <p style="font-size:1.1rem; color:#bbb; margin-bottom:1.5rem;">🎮 1.21限定・28的闖關式心理測驗</p>
+                    <p style="line-height:1.6; margin-bottom:2.5rem;">請帶著愉悅輕鬆快樂的心情<br>開啟這多重賽道 × 命運爬梯</p>
+                    <p style="color:var(--neon-green); font-weight:bold; font-size:1.1rem; margin-bottom:0.8rem;">⚠️ 請務必誠實回答~耐心作答到最後一頁ㄛ</p>
+                    <div style="font-size:1.5rem; color:#fff; margin-bottom:1.5rem; text-shadow: 0 0 5px rgba(255,255,255,0.5);">Take your mark</div>
+                    <button class="option-btn" style="width:100%; text-align:center; font-size:1.3rem;" onclick="goToNameInput()">[ GO! ]</button>
+                </div>
+            `;
+            document.getElementById('progress-bar').style.width = "0%";
+        } else if (gameState === "nameInput") {
+            ui.innerHTML = `
+                <div style="text-align:center;">
+                    <h2 style="margin-top:0;">嗨~請問要怎麼稱呼你呢?</h2>
+                    <input type="text" id="playerNameInput" class="input-name-field" placeholder="我是... (匿名可)">
+                    <button class="option-btn" style="width:100%; margin-top:2rem; text-align:center; font-size:1.3rem;" onclick="startGame()">[ START ]</button>
+                </div>
+            `;
+            document.getElementById('progress-bar').style.width = "0%";
+        } else if (gameState === "quiz") {
+            const progress = (currentIndex / 6) * 100;
+            document.getElementById('progress-bar').style.width = progress + "%";
 
-        const data = currentSession[currentIndex];
-        ui.innerHTML = `
-            <div class="question-box">
-                <div style="font-size:0.7rem; color:var(--neon-green); margin-bottom:0.5rem;">[STATION_0${currentIndex+1}]</div>
+            const data = currentSession[currentIndex];
+            ui.innerHTML = `
+                <div style="font-size:0.7rem; color:var(--neon-green); margin-bottom:0.5rem;">[STATION_0${currentIndex+1} / 06]</div>
                 <h2>${data.q}</h2>
                 <div class="btn-grid">${data.options.map((opt, i) => `<button class="option-btn" onclick="tap(${i})">${opt}</button>`).join('')}</div>
-            </div>`;
+            `;
+        } else if (gameState === "result") {
+            document.getElementById('progress-bar').style.width = "100%";
+            const res = finalResults[score % 6];
+            ui.innerHTML = `
+                <div class="result-card fade-in">
+                    <div style="color:var(--neon-green); font-size:0.8rem;">FINAL ANALYSIS COMPLETE</div>
+                    <div style="margin-top:1rem;">${userName}，測驗結果分析：你是...</div>
+                    <div class="result-name">${res.name}</div>
+                    <div class="result-desc">${res.desc}</div>
+                    <div style="margin-top:2rem; padding:1rem; background:rgba(0,255,65,0.1); border:1px dashed var(--neon-green); font-size:0.9rem;">
+                        🎂 親愛的 ${userName}，生日快樂！<br>
+                        這份測驗是你性格的矩陣分析。<br>
+                        願你在新的一歲裡，不管是喝林三還是被超哥除蟲，都能開開心心！
+                    </div>
+                    <button class="option-btn" style="width:100%; margin-top:2rem; text-align:center;" onclick="location.reload()">重新解碼</button>
+                </div>
+            `;
+        }
     }
+
+    // 導航函數
+    window.goToNameInput = () => {
+        gameState = "nameInput";
+        renderUI();
+    };
+
+    window.startGame = () => {
+        const inputName = document.getElementById('playerNameInput').value.trim();
+        if (inputName) {
+            userName = inputName;
+        } else {
+            userName = "匿名挑戰者"; // 如果沒輸入名字，給個預設值
+        }
+        gameState = "quiz";
+        initGame(); // 開始遊戲邏輯
+    };
 
     window.tap = (idx) => {
         score += idx;
         currentIndex++;
-        render();
+        if (currentIndex < currentSession.length) {
+            renderUI();
+        } else {
+            gameState = "result";
+            renderUI();
+        }
     };
 
-    function showResult() {
-        const ui = document.getElementById('game-ui');
-        const res = finalResults[score % 6];
-        ui.innerHTML = `
-            <div class="result-card question-box">
-                <div style="color:var(--neon-green); font-size:0.8rem;">FINAL ANALYSIS COMPLETE</div>
-                <div style="margin-top:1rem;">測驗結果分析：你是...</div>
-                <div class="result-name">${res.name}</div>
-                <div class="result-desc">${res.desc}</div>
-                <div style="margin-top:2rem; padding:1rem; background:rgba(0,255,65,0.1); border:1px dashed var(--neon-green); font-size:0.9rem;">
-                    🎂 生日快樂！不管結果是哪一個，<br>你都是大家心中最獨特的那個。
-                </div>
-                <button class="option-btn" style="width:100%; margin-top:2rem; text-align:center;" onclick="location.reload()">重新解碼</button>
-            </div>`;
-        document.getElementById('progress-bar').style.width = "100%";
-    }
+    // 初始化顯示封面
+    renderUI();
 
-    init();
 </script>
 </body>
 </html>
