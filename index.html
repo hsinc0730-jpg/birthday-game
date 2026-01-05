@@ -18,25 +18,30 @@
             margin: 0;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start; /* 改為從頂部開始，配合 padding 達成居中感 */
             min-height: 100vh;
-            overflow: hidden;
+            overflow-y: auto; /* 允許垂直捲動 */
+            overflow-x: hidden;
         }
 
-        /* 背景矩陣數字流 */
+        /* 背景矩陣數字流 - 固定在後方 */
         #bg-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 1; opacity: 0.2; pointer-events: none;
         }
 
         #main-frame {
-            width: 90%; max-width: 500px;
+            width: 90%; 
+            max-width: 500px;
             background: var(--panel-bg);
-            padding: 2.5rem;
+            padding: 2rem;
+            margin: 2rem 0; /* 增加上下邊距，確保捲動到底部時不會貼齊邊緣 */
             border: 1px solid var(--neon-green);
             box-shadow: 0 0 40px rgba(0, 255, 65, 0.2);
-            position: relative; z-index: 10;
+            position: relative; 
+            z-index: 10;
             backdrop-filter: blur(8px);
+            box-sizing: border-box;
         }
 
         .fade-in { animation: fadeIn 0.5s ease-out forwards; }
@@ -53,7 +58,7 @@
         @keyframes blink { 50% { border-color: transparent } }
 
         h1.main-title {
-            color: var(--neon-green); font-size: 2.8rem;
+            color: var(--neon-green); font-size: 2.2rem; /* 稍微縮小標題以適應小螢幕 */
             text-shadow: 0 0 15px var(--neon-green); margin: 0.5rem 0;
         }
 
@@ -64,6 +69,7 @@
             border: 1px solid var(--neon-green); padding: 1.1rem;
             text-align: left; cursor: pointer; transition: 0.3s;
             margin-bottom: 1rem; width: 100%; font-size: 0.95rem;
+            box-sizing: border-box;
         }
         .option-btn:hover {
             background: var(--neon-green); color: #000;
@@ -71,9 +77,10 @@
         }
 
         .input-field {
-            width: calc(100% - 24px); padding: 12px; margin: 1.5rem 0;
+            width: 100%; padding: 12px; margin: 1.5rem 0;
             background: #000; border: 1px solid var(--neon-green);
             color: var(--neon-green); font-size: 1.2rem; outline: none;
+            box-sizing: border-box;
         }
 
         .progress-bar { height: 2px; background: #222; width: 100%; margin-top: 1rem; }
@@ -84,8 +91,9 @@
             background: rgba(0, 255, 65, 0.05); border: 1px solid var(--neon-green);
             padding: 1.2rem; margin-top: 1.5rem; font-size: 0.9rem; line-height: 1.7;
             text-align: left;
+            word-wrap: break-word; /* 確保長文字會換行 */
         }
-        .result-name-big { font-size: 2.5rem; color: var(--neon-green); margin: 1.5rem 0; font-weight: bold; text-align: center; }
+        .result-name-big { font-size: 2.5rem; color: var(--neon-green); margin: 1rem 0; font-weight: bold; text-align: center; }
     </style>
 </head>
 <body>
@@ -101,8 +109,14 @@
     // 背景 Matrix 雨滴效果
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
     const columns = Math.floor(canvas.width / 20);
     const drops = new Array(columns).fill(1);
     function drawMatrix() {
@@ -119,14 +133,13 @@
     }
     setInterval(drawMatrix, 50);
 
-    // 回復您最原始、生動的題庫描述
     const questions = [
         { q: "🍹 如果今天考試滿分，會選以下哪一杯手搖獎勵自己呢？", options: ["八曜牧場307 🥛🐄", "茶湯會金桂觀音珍珠拿鐵 🍵🧋", "林三凍檸茶 🍋🧊", "八曜 柚迷人 😍🍊", "一沐日桂花粉粿檸檬 🌼🍋", "午後時光的奶茶 ☕"] },
         { q: "😈 如果 5xN 臨時爽約（而且理由超爛），你最想怎麼懲罰他呢？", options: ["表面沒事～但心裡記一筆～下次默默算帳 😌🧾", "逼他請飲料，然後當場原諒他～ 🧋🤝", "發限時動態／Retro 讓全世界知道他爽約～大家一起公審 📱🔥"] },
         { q: "🏝️ 如果被丟到孤島，只能帶一樣東西，你會帶？", options: ["超哥沒有充電的電動牙刷 🪥⚡", "跟吳承恩的情侶檸檬泳褲 🍋🩳", "一碗「安姆士」的招牌養生拌飯 🍚🥗"] },
         { q: "🎲 猜拳輸了～願賭服輸的你，如果必須接受一個懲罰，會選哪一個？", options: ["穿全綠套裝一整天 🟢👕", "兩個禮拜不能喝手搖 🚫🧋", "由吳承恩教學，一起跳 3 首女團舞 💃🎶"] },
         { q: "🌋 以下哪一個事件最有可能讓你火山爆發、心情不好（生氣）？", options: ["吳承恩遲到 2 小時後一起去吃飯，還吃了 3 小時 ⏰😤", "超哥約好一起做報告，但他都在睡覺 😴📄", "車子準備停車的時候被別人撞到擦傷 🚗💥"] },
-        { q: "🌙 半夜群組突然叮咚叮咚很吵～訊息不停歇，你的內心 OS？", options: ["吳承恩是不是又在群組耍帥了，我要拔刀 🔪😠", "超哥感覺又被公幹了，按笑臉表符看戲 😂🍿", "可能是張馨／呂宜甄在約飯局～？ 🍽️👀", "應該是露比在分享好吃的 IG 美食吧！ 📸🍰"] },
+        { q: "🌙 半夜群組突然叮咚叮咚很吵～訊息不停歇，你的內心 OS？", options: ["吳承恩是不是又在群組耍帥了，我要拔刀 🔪😠", "超哥感覺又被公幹了，來按笑臉表符看戲 😂🍿", "可能是張馨／呂宜甄在約飯局～？ 🍽️👀", "應該是露比在分享好吃的 IG 美食吧！ 📸🍰"] },
         { q: "🧋 點手搖的時候，你最不能接受的是哪一個？", options: ["甜度不對，一分糖變成七分糖 🍬❌", "點了檸檬品項，但檸檬曠課 🍋🚫", "珍珠自動被換成波霸 ⚫🔄"] },
         { q: "🏊‍♂️ 泳訓的時候最不想游哪一個菜單？", options: ["施教練的菜單＋重訓 💪🥵", "甲組的魔鬼訓練菜單 👿🔥", "4/1 的愚人節菜單 🤡📅", "帶班當一天全職經理 📋😵"] },
         { q: "😱💬 聽到什麼八卦會讓你驚掉下巴？", options: ["吳承恩是蓋 🤯🏳️‍🌈", "超哥深深地愛上你 😍💘", "聽到自己已熱戀中 💖🔥", "吳承恩已密謀許久向你求婚 💍😳"] },
@@ -135,7 +148,7 @@
         { q: "💇✨ 如果必須要挑戰一個新髮型，你會選擇？", options: ["重返高中和兄弟們的平頭髮型 ✂️😎", "呂宜甄的雙色挑染 🌈🔥", "旺仔同款的美式前刺 🇺🇸🦔", "變身最耀眼的金髮男神 💛👑"] }
     ];
 
-   const finalResults = [
+    const finalResults = [
         { name: "林三凍檸茶", desc: "你是每日報到林三買凍檸茶的 VVVVIP！就像凍檸茶一樣，你給人清新、解膩的感覺，雖然偶爾有一點酸度（原則），但絕對是大家最愛的消暑良藥。" },
         { name: "星太郎超[寬]條餅", desc: "擁有太平洋寬肩的男人！內在性格厚實有層次，給身邊的朋友帶來極大的安全感。雖然外表可能有點硬，但相處久了發現你既香又脆，超級可靠。" },
         { name: "生乳捲", desc: "不用卷也可以拿書卷的工工卷哥！你的智商與努力達到完美平衡，就像生乳捲的比例。表面柔軟溫和，內在卻有豐富的乾貨，是大家崇拜的卷哥。" },
@@ -149,6 +162,9 @@
     function render(state) {
         const ui = document.getElementById('game-ui');
         ui.innerHTML = ''; ui.className = 'fade-in';
+        // 每次切換畫面時將捲軸拉回最上方
+        window.scrollTo(0, 0);
+
         if (state === 'cover') {
             ui.innerHTML = `
                 <div class="welcome-anim">WELCOME_TO_STATION...</div>
@@ -175,7 +191,6 @@
         } else if (state === 'result') {
             const res = finalResults[score % 6];
             document.getElementById('progress-fill').style.width = "100%";
-            // 提取關鍵字做回顧
             const reviewStr = history.map(h => h.split(' ')[0]).join('、');
             ui.innerHTML = `
                 <div style="color:var(--neon-green); font-size:0.7rem;">ANALYSIS_COMPLETE</div>
@@ -190,7 +205,7 @@
 
                 <div class="summary-box">
                     <strong style="color:var(--neon-green);">✨ 餓了吧的生日祝福：</strong><br>
-                    願你在 20 歲這年，保有選 <strong>${history[0]}</strong> 的那份快樂！即使遇到類似 <strong>${history[2]}</strong> 這種選擇困難，或 <strong>${history[4]}</strong> 這種火山爆發的事，都能像 <strong>${res.name}</strong> 一樣帥氣應對。餓了吧的塞車工廠團隊在此祝遠在澳洲的你~生日快樂！
+                    願你在 28 歲這年，保有選 <strong>${history[0]}</strong> 的那份快樂！即使遇到類似 <strong>${history[2]}</strong> 這種選擇困難，或 <strong>${history[4]}</strong> 這種火山爆發的事，都能像 <strong>${res.name}</strong> 一樣帥氣應對。餓了吧的塞車工廠團隊在此祝遠在澳洲的你~生日快樂！
                 </div>
 
                 <button class="option-btn" style="text-align:center; margin-top:2rem;" onclick="location.reload()">SYSTEM_RESTART</button>
@@ -215,5 +230,3 @@
 </script>
 </body>
 </html>
-
-
