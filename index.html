@@ -18,13 +18,12 @@
             margin: 0;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* 改為從頂部開始，配合 padding 達成居中感 */
+            align-items: flex-start;
             min-height: 100vh;
-            overflow-y: auto; /* 允許垂直捲動 */
+            overflow-y: auto;
             overflow-x: hidden;
         }
 
-        /* 背景矩陣數字流 - 固定在後方 */
         #bg-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 1; opacity: 0.2; pointer-events: none;
@@ -35,7 +34,7 @@
             max-width: 500px;
             background: var(--panel-bg);
             padding: 2rem;
-            margin: 2rem 0; /* 增加上下邊距，確保捲動到底部時不會貼齊邊緣 */
+            margin: 2rem 0;
             border: 1px solid var(--neon-green);
             box-shadow: 0 0 40px rgba(0, 255, 65, 0.2);
             position: relative; 
@@ -47,7 +46,6 @@
         .fade-in { animation: fadeIn 0.5s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Welcome 打字機效果 */
         .welcome-anim {
             font-size: 0.8rem; letter-spacing: 3px; color: var(--neon-green);
             margin-bottom: 1rem; border-right: 2px solid var(--neon-green);
@@ -58,7 +56,7 @@
         @keyframes blink { 50% { border-color: transparent } }
 
         h1.main-title {
-            color: var(--neon-green); font-size: 2.2rem; /* 稍微縮小標題以適應小螢幕 */
+            color: var(--neon-green); font-size: 2.2rem;
             text-shadow: 0 0 15px var(--neon-green); margin: 0.5rem 0;
         }
 
@@ -70,7 +68,16 @@
             text-align: left; cursor: pointer; transition: 0.3s;
             margin-bottom: 1rem; width: 100%; font-size: 0.95rem;
             box-sizing: border-box;
+            outline: none; /* 移除預設外框 */
+            -webkit-tap-highlight-color: transparent; /* 移除行動端點擊高亮 */
         }
+        
+        /* 確保按鈕在未獲得焦點或未懸停時不會高亮 */
+        .option-btn:focus {
+            background: rgba(0, 255, 65, 0.05);
+            box-shadow: none;
+        }
+
         .option-btn:hover {
             background: var(--neon-green); color: #000;
             box-shadow: 0 0 20px var(--neon-green); transform: translateX(5px);
@@ -86,12 +93,11 @@
         .progress-bar { height: 2px; background: #222; width: 100%; margin-top: 1rem; }
         #progress-fill { height: 100%; background: var(--neon-green); width: 0%; transition: 0.5s; }
 
-        /* 結果頁回顧與祝福框 */
         .summary-box {
             background: rgba(0, 255, 65, 0.05); border: 1px solid var(--neon-green);
             padding: 1.2rem; margin-top: 1.5rem; font-size: 0.9rem; line-height: 1.7;
             text-align: left;
-            word-wrap: break-word; /* 確保長文字會換行 */
+            word-wrap: break-word;
         }
         .result-name-big { font-size: 2.5rem; color: var(--neon-green); margin: 1rem 0; font-weight: bold; text-align: center; }
     </style>
@@ -106,7 +112,6 @@
 </div>
 
 <script>
-    // 背景 Matrix 雨滴效果
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     
@@ -162,7 +167,6 @@
     function render(state) {
         const ui = document.getElementById('game-ui');
         ui.innerHTML = ''; ui.className = 'fade-in';
-        // 每次切換畫面時將捲軸拉回最上方
         window.scrollTo(0, 0);
 
         if (state === 'cover') {
@@ -170,7 +174,7 @@
                 <div class="welcome-anim">WELCOME_TO_STATION...</div>
                 <h1 class="main-title">歡迎來到餓了吧~</h1>
                 <p style="color:var(--neon-green); font-size:0.95rem; margin-bottom:1.5rem;">🎮 1.21今日限定28hr・闖關測驗</p>
-                <p style="line-height:1.7; font-size:0.9rem;">請帶著愉悅輕鬆的心情開啟這個 多重賽道 × 命運爬梯<br><span style="color:#888;">⚠️ 請誠實回答~並耐心地玩到最後一頁ㄛ</span></p>
+                <p style="line-height:1.7; font-size:0.9rem;">請帶著愉悅輕鬆的心情開啟這個<br>多重賽道 × 命運爬梯<br><span style="color:#888;">⚠️ 請誠實回答~並耐心地玩到最後一頁ㄛ</span></p>
                 <div style="margin:2rem 0; letter-spacing:2px; font-weight:bold;">Take your mark!Ready~</div>
                 <button class="option-btn" style="text-align:center" onclick="render('name')">[ GO! ]</button>
             `;
@@ -228,5 +232,7 @@
 
     render('cover');
 </script>
+</body>
+</html>
 </body>
 </html>
