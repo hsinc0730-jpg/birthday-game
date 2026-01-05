@@ -62,18 +62,16 @@
 
         h2 { color: var(--neon-green); font-size: 1.15rem; line-height: 1.6; margin-bottom: 1.5rem; }
 
-        /* 修正按鈕樣式：移除預設 Focus 螢光 */
         .option-btn {
             background: rgba(0, 255, 65, 0.05); color: #fff;
             border: 1px solid var(--neon-green); padding: 1.1rem;
             text-align: left; cursor: pointer; transition: 0.3s;
             margin-bottom: 1rem; width: 100%; font-size: 0.95rem;
             box-sizing: border-box;
-            outline: none !important; /* 徹底移除按鈕外框 */
+            outline: none !important;
             -webkit-tap-highlight-color: transparent;
         }
         
-        /* 確保進入新題目時，焦點按鈕不會顯示綠色高亮 */
         .option-btn:focus {
             background: rgba(0, 255, 65, 0.05);
             color: #fff;
@@ -81,7 +79,6 @@
             transform: none;
         }
 
-        /* 只有在滑鼠懸停或主動點擊時才顯示螢光 */
         .option-btn:hover, .option-btn:active {
             background: var(--neon-green); color: #000;
             box-shadow: 0 0 20px var(--neon-green); transform: translateX(5px);
@@ -104,6 +101,33 @@
             word-wrap: break-word;
         }
         .result-name-big { font-size: 2.5rem; color: var(--neon-green); margin: 1rem 0; font-weight: bold; text-align: center; }
+
+        /* --- 塞車動畫 CSS --- */
+        .traffic-jam-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 10px 0;
+            border-top: 1px dashed rgba(0, 255, 65, 0.3);
+            overflow: hidden;
+        }
+
+        .car-emoji {
+            font-size: 1.5rem;
+            animation: vibrate 0.2s infinite;
+        }
+
+        /* 原地晃動動畫 */
+        @keyframes vibrate {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(1px, -1px); }
+            50% { transform: translate(-1px, 1px); }
+            75% { transform: translate(1px, 1px); }
+            100% { transform: translate(0, 0); }
+        }
+        /* 讓不同車子震動頻率稍微錯開更真實 */
+        .car-emoji:nth-child(even) { animation-delay: 0.1s; }
     </style>
 </head>
 <body>
@@ -216,6 +240,14 @@
                     願你在 28 歲這年，保有選 <strong>${history[0]}</strong> 的那份快樂！即使遇到類似 <strong>${history[2]}</strong> 這種選擇困難，或 <strong>${history[4]}</strong> 這種火山爆發的事，都能像 <strong>${res.name}</strong> 一樣帥氣應對。餓了吧的塞車工廠團隊在此祝遠在澳洲的你~生日快樂！
                 </div>
 
+                <div class="traffic-jam-container">
+                    <span class="car-emoji">🚗</span>
+                    <span class="car-emoji">🚕</span>
+                    <span class="car-emoji">🚙</span>
+                    <span class="car-emoji">🚌</span>
+                    <span class="car-emoji">🚚</span>
+                </div>
+
                 <button class="option-btn" style="text-align:center; margin-top:2rem;" onclick="location.reload()">SYSTEM_RESTART</button>
             `;
         }
@@ -238,4 +270,3 @@
 </script>
 </body>
 </html>
-
