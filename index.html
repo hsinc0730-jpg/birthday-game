@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MATRIX: BIRTHDAY CHALLENGE</title>
+    <style>
+        :root {
+            --neon-green: #00ff41;
+            --dark-bg: #050505;
+            --panel-bg: rgba(15, 15, 15, 0.95);
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: #e0e0e0;
+            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            background-image: radial-gradient(circle, #002200 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* 科技感掃描線 */
+        .scanline {
+            width: 100%; height: 100px;
+            background: linear-gradient(0deg, rgba(0, 255, 65, 0) 0%, rgba(0, 255, 65, 0.1) 50%, rgba(0, 255, 65, 0) 100%);
+            position: fixed; top: -100px; left: 0; z-index: 100;
+            animation: scan 4s linear infinite; pointer-events: none;
+        }
+        @keyframes scan { 0% { top: -100px; } 100% { top: 100%; } }
+
+        #main-frame {
+            width: 90%; max-width: 500px;
+            background: var(--panel-bg);
+            padding: 2rem;
+            border: 1px solid var(--neon-green);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+
+        .question-box { animation: slideIn 0.5s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+
+        h2 { color: var(--neon-green); text-shadow: 0 0 10px rgba(0, 255, 65, 0.5); font-size: 1.2rem; margin-bottom: 1.5rem; line-height: 1.6; }
+
+        .btn-grid { display: grid; gap: 1rem; }
+        .option-btn {
+            background: rgba(0, 255, 65, 0.05);
+            color: #fff;
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            padding: 1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: 0.3s;
+            border-radius: 2px;
+            font-size: 0.95rem;
+        }
+        .option-btn:hover {
+            background: rgba(0, 255, 65, 0.2);
+            border-color: var(--neon-green);
+            box-shadow: 0 0 10px var(--neon-green);
+            transform: scale(1.02);
+        }
+
+        .progress-container { margin-top: 2rem; height: 2px; background: #222; width: 100%; position: relative; }
+        #progress-bar { height: 100%; background: var(--neon-green); width: 0%; transition: 0.5s; box-shadow: 0 0 10px var(--neon-green); }
+
+        .result-card { text-align: center; }
+        .result-name { font-size: 2rem; color: var(--neon-green); margin: 1rem 0; font-weight: bold; }
+        .result-desc { line-height: 1.8; color: #bbb; text-align: left; padding: 1rem; border-top: 1px solid #333; }
+    </style>
+</head>
+<body>
+
+<div class="scanline"></div>
+<div id="main-frame">
+    <div id="game-ui"></div>
+    <div class="progress-container"><div id="progress-bar"></div></div>
+</div>
+
+<script>
+    const questions = [
+        { q: "🍹 如果今天考試滿分，會選以下哪一杯手搖獎勵自己呢？", options: ["八曜牧場307 🥛", "茶湯會金桂觀音珍珠拿鐵 🍵", "林三凍檸茶 🍋", "八曜 柚迷人 🍊", "一沐日桂花粉粿檸檬 🌼", "午後時光的奶茶"] },
+        { q: "😈 如果 5xN 臨時爽約（理由超爛），你最想怎麼懲罰他呢？", options: ["表面沒事～但心裡記一筆 😌", "逼他請飲料，然後當場原諒他 🧋", "發限動讓全世界一起公審 📱"] },
+        { q: "🏝️ 如果被丟到孤島，只能帶一樣東西，你會帶？", options: ["超哥沒有充電的電動牙刷 🪥", "跟吳承恩的情侶檸檬泳褲 🍋", "一碗「安姆士」的招牌養生拌飯 🍚"] },
+        { q: "🎲 猜拳輸了，必須接受一個懲罰，會選哪一個？", options: ["穿全綠套裝一整天 🟢", "兩個禮拜不能喝手搖 🚫", "吳承恩教學跳 3 首女團舞 💃"] },
+        { q: "🌋 以下哪一個事件最有可能讓你火山爆發？", options: ["吳承恩遲到 2 小時還吃 3 小時 ⏰", "超哥做報告一直在睡覺 😴", "車子準備停車被撞到擦傷 🚗"] },
+        { q: "🌙 半夜群組突然叮咚叮咚很吵，你的內心 OS？", options: ["吳承恩又在耍帥，我要拔刀 🔪", "超哥又被公幹了，看戲 😂", "張馨／呂宜甄在約飯局？ 🍽️", "露比在分享美食吧！ 📸"] },
+        { q: "🧋 點手搖的時候，你最不能接受的是哪一個？", options: ["甜度不對 (一分變七分) 🍬", "檸檬品項但檸檬曠課 🍋", "珍珠自動被換成波霸 ⚫"] },
+        { q: "🏊‍♂️ 泳訓的時候最不想游哪一個菜單？", options: ["施教練的菜單＋重訓 💪", "甲組的魔鬼訓練菜單 👿", "4/1 的愚人節菜單 🤡", "帶班當一天全職經理 📋"] },
+        { q: "😱💬 聽到什麼八卦會讓你驚掉下巴？", options: ["吳承恩是蓋 🤯", "超哥深深地愛上你 😍", "聽到自己已熱戀中 💖", "吳承恩密謀向你求婚 💍"] },
+        { q: "🧢 如果今天一定要選一頂泳帽，你會選？", options: ["變成一顆檸檬🍋的泳帽 😆", "有旗的鯊魚泳帽 🦈", "變成一顆網球🎾的泳帽 😎"] },
+        { q: "⚡🏠 如果今天宿舍停電，超哥準備來你們房間，你會……", options: ["一秒鎖門，無情拒絕進入 🔒", "開 20 個超緊瓶蓋才可進入 🫙", "簽下「永久幫忙除蟲」契約 🪳", "門口跳 Overdrive 後進來 🎤"] },
+        { q: "💇✨ 如果必須要挑戰一個新髮型，你會選擇？", options: ["高中兄弟們的平頭髮型 ✂️", "呂宜甄的雙色挑染 🌈", "旺仔同款的美式前刺 🦔", "變身最耀眼的金髮男神 💛"] }
+    ];
+
+    const finalResults = [
+        { name: "林三凍檸茶", desc: "你是每日報到林三買凍檸茶的 VVVVIP！就像凍檸茶一樣，你給人清新、解膩的感覺，雖然偶爾有一點酸度（原則），但絕對是大家最愛的消暑良藥。" },
+        { name: "星太郎超[寬]條餅", desc: "擁有太平洋寬肩的男人！內在性格厚實有層次，給身邊的朋友帶來極大的安全感。雖然外表可能有點硬，但相處久了發現你既香又脆，超級可靠。" },
+        { name: "生乳捲", desc: "不用卷也可以拿書卷的工工卷哥！你的智商與努力達到完美平衡，就像生乳捲的比例。表面柔軟溫和，內在卻有豐富的乾貨，是大家崇拜的卷哥。" },
+        { name: "日曆", desc: "跟日曆變頻冷氣一樣高冷的男子。你專注於自己的節奏與節能，不隨便浪費情緒，但在最關鍵的時刻，你提供的溫控與穩定是大家最依賴的動力。" },
+        { name: "筷子", desc: "吃飯很快並善於等待吳承恩吃飯的人。你是最具備耐心與直率基因的人，性格簡單明瞭。雖然自己效率極高，卻願意為了朋友放慢速度，是最佳夥伴。" },
+        { name: "樂事 (香菜口味)", desc: "樂事香菜口味的知音。你的品味極具獨特性，完全不在乎大眾眼光。雖然有時讓人摸不透，但一旦懂你的人，就會深深愛上你這種靈魂香氣。" }
+    ];
+
+    let currentSession = [];
+    let currentIndex = 0;
+    let score = 0;
+
+    function init() {
+        currentSession = [...questions].sort(() => Math.random() - 0.5).slice(0, 6);
+        render();
+    }
+
+    function render() {
+        const ui = document.getElementById('game-ui');
+        const progress = (currentIndex / 6) * 100;
+        document.getElementById('progress-bar').style.width = progress + "%";
+
+        if (currentIndex >= 6) return showResult();
+
+        const data = currentSession[currentIndex];
+        ui.innerHTML = `
+            <div class="question-box">
+                <div style="font-size:0.7rem; color:var(--neon-green); margin-bottom:0.5rem;">[STATION_0${currentIndex+1}]</div>
+                <h2>${data.q}</h2>
+                <div class="btn-grid">${data.options.map((opt, i) => `<button class="option-btn" onclick="tap(${i})">${opt}</button>`).join('')}</div>
+            </div>`;
+    }
+
+    window.tap = (idx) => {
+        score += idx;
+        currentIndex++;
+        render();
+    };
+
+    function showResult() {
+        const ui = document.getElementById('game-ui');
+        const res = finalResults[score % 6];
+        ui.innerHTML = `
+            <div class="result-card question-box">
+                <div style="color:var(--neon-green); font-size:0.8rem;">FINAL ANALYSIS COMPLETE</div>
+                <div style="margin-top:1rem;">測驗結果分析：你是...</div>
+                <div class="result-name">${res.name}</div>
+                <div class="result-desc">${res.desc}</div>
+                <div style="margin-top:2rem; padding:1rem; background:rgba(0,255,65,0.1); border:1px dashed var(--neon-green); font-size:0.9rem;">
+                    🎂 生日快樂！不管結果是哪一個，<br>你都是大家心中最獨特的那個。
+                </div>
+                <button class="option-btn" style="width:100%; margin-top:2rem; text-align:center;" onclick="location.reload()">重新解碼</button>
+            </div>`;
+        document.getElementById('progress-bar').style.width = "100%";
+    }
+
+    init();
+</script>
+</body>
+</html>
