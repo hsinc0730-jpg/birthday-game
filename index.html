@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MATRIX: 28th BIRTHDAY PROTOCOL</title>
+    <title>MATRIX: BIRTHDAY PROTOCOL 28</title>
     <style>
         :root {
             --neon-green: #00ff41;
@@ -23,11 +23,10 @@
             overflow: hidden;
         }
 
-        /* 酷炫動態背景網格 */
+        /* 背景矩陣數字流 */
         #bg-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; opacity: 0.15;
-            transition: opacity 1s ease;
+            z-index: 1; opacity: 0.2; pointer-events: none;
         }
 
         #main-frame {
@@ -35,57 +34,58 @@
             background: var(--panel-bg);
             padding: 2.5rem;
             border: 1px solid var(--neon-green);
-            box-shadow: 0 0 40px rgba(0, 255, 65, 0.15);
+            box-shadow: 0 0 40px rgba(0, 255, 65, 0.2);
             position: relative; z-index: 10;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(8px);
         }
 
-        /* 出場動畫 */
-        .fade-in { animation: glitch 0.4s ease-out forwards; }
-        @keyframes glitch {
-            0% { opacity: 0; transform: scale(0.9); filter: hue-rotate(90deg); }
-            100% { opacity: 1; transform: scale(1); filter: hue-rotate(0deg); }
-        }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .welcome-text {
-            font-size: 0.8rem; letter-spacing: 4px; color: var(--neon-green);
+        /* Welcome 打字機效果 */
+        .welcome-anim {
+            font-size: 0.8rem; letter-spacing: 3px; color: var(--neon-green);
             margin-bottom: 1rem; border-right: 2px solid var(--neon-green);
-            white-space: nowrap; overflow: hidden;
-            width: fit-content; animation: typing 2s steps(20), blink .5s step-end infinite;
+            white-space: nowrap; overflow: hidden; width: 0;
+            animation: typing 2s steps(25) forwards, blink 0.7s step-end infinite;
         }
         @keyframes typing { from { width: 0 } to { width: 100% } }
-        @keyframes blink { from, to { border-color: transparent } 50% { border-color: var(--neon-green) } }
+        @keyframes blink { 50% { border-color: transparent } }
 
         h1.main-title {
             color: var(--neon-green); font-size: 2.8rem;
-            text-shadow: 0 0 20px var(--neon-green); margin: 0.5rem 0;
+            text-shadow: 0 0 15px var(--neon-green); margin: 0.5rem 0;
         }
+
+        h2 { color: var(--neon-green); font-size: 1.15rem; line-height: 1.6; margin-bottom: 1.5rem; }
 
         .option-btn {
             background: rgba(0, 255, 65, 0.05); color: #fff;
             border: 1px solid var(--neon-green); padding: 1.1rem;
-            text-align: left; cursor: pointer; transition: 0.2s;
+            text-align: left; cursor: pointer; transition: 0.3s;
             margin-bottom: 1rem; width: 100%; font-size: 0.95rem;
-            position: relative;
         }
         .option-btn:hover {
             background: var(--neon-green); color: #000;
             box-shadow: 0 0 20px var(--neon-green); transform: translateX(5px);
         }
 
-        .progress-bar { height: 2px; background: #222; width: 100%; margin-top: 2rem; }
-        #progress-fill { height: 100%; background: var(--neon-green); width: 0%; transition: 0.5s; }
-
-        .input-name-field {
+        .input-field {
             width: calc(100% - 24px); padding: 12px; margin: 1.5rem 0;
             background: #000; border: 1px solid var(--neon-green);
             color: var(--neon-green); font-size: 1.2rem; outline: none;
         }
 
+        .progress-bar { height: 2px; background: #222; width: 100%; margin-top: 1rem; }
+        #progress-fill { height: 100%; background: var(--neon-green); width: 0%; transition: 0.5s; }
+
+        /* 結果頁回顧與祝福框 */
         .summary-box {
-            background: rgba(0, 255, 65, 0.1); border-left: 3px solid var(--neon-green);
-            padding: 1rem; margin-top: 1.5rem; font-size: 0.9rem; line-height: 1.6;
+            background: rgba(0, 255, 65, 0.05); border: 1px solid var(--neon-green);
+            padding: 1.2rem; margin-top: 1.5rem; font-size: 0.9rem; line-height: 1.7;
+            text-align: left;
         }
+        .result-name-big { font-size: 2.5rem; color: var(--neon-green); margin: 1.5rem 0; font-weight: bold; text-align: center; }
     </style>
 </head>
 <body>
@@ -98,14 +98,13 @@
 </div>
 
 <script>
-    // 背景矩陣動畫
+    // 背景 Matrix 雨滴效果
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     const columns = Math.floor(canvas.width / 20);
     const drops = new Array(columns).fill(1);
-
     function drawMatrix() {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -120,106 +119,99 @@
     }
     setInterval(drawMatrix, 50);
 
-    // 測驗題庫
+    // 回復您最原始、生動的題庫描述
     const questions = [
-        { q: "🍹 考試滿分的手搖獎勵？", options: ["八曜牧場307 🥛", "茶湯會金桂觀音珍珠拿鐵 🍵🧋", "林三凍檸茶 🍋🧊", "八曜 柚迷人 😍🍊", "一沐日桂花粉粿檸檬 🌼🍋", "午後時光的奶茶 ☕"] },
-        { q: "😈 5xN 臨時爽約，你怎麼懲罰？", options: ["記小帳默默算帳 😌🧾", "逼他請飲料 🧋🤝", "發限動讓大家公審 📱🔥"] },
-        { q: "🏝️ 孤島生存只能帶一樣？", options: ["超哥沒電的電動牙刷 🪥⚡", "跟吳承恩的情侶泳褲 🍋🩳", "安姆士的招牌養生拌飯 🍚🥗"] },
-        { q: "🎲 猜拳輸了必須接受懲罰？", options: ["穿全綠套裝 🟢👕", "兩週不喝手搖 🚫🧋", "跟吳承恩跳女團舞 💃🎶"] },
-        { q: "🌋 什麼事件讓你火山爆發？", options: ["吳承恩遲到 2 小時 ⏰😤", "超哥做報告一直在睡 😴📄", "車子被撞到擦傷 🚗💥"] },
-        { q: "🌙 半夜群組很吵，內心 OS？", options: ["吳承恩又在耍帥 🔪😠", "超哥又被公幹了 😂🍿", "可能在約飯局？ 🍽️👀", "露比分享美食 📸🍰"] },
-        { q: "🧋 點手搖最不能接受？", options: ["甜度變七分糖 🍬❌", "檸檬品項檸檬曠課 🍋🚫", "珍珠換成波霸 ⚫🔄"] },
-        { q: "🏊‍♂️ 泳訓最不想游哪個菜單？", options: ["施教練重訓 🥵", "甲組魔鬼菜單 👿", "愚人節菜單 🤡", "當全職經理 📋"] },
-        { q: "😱💬 聽到什麼八卦會驚掉下巴？", options: ["吳承恩是蓋 🤯", "超哥愛上你 😍", "自己已熱戀中 💖", "吳承恩密謀求婚 💍"] },
-        { q: "🧢 一定要選一頂泳帽？", options: ["檸檬泳帽 🍋", "鯊魚泳帽 🦈", "網球泳帽 🎾"] },
-        { q: "⚡🏠 宿舍停電超哥想進房？", options: ["一秒鎖門 🔒", "開20個瓶蓋 🫙", "簽除蟲契約 🪳", "跳 Overdrive 🎤"] },
-        { q: "💇✨ 挑戰一個新髮型？", options: ["兄弟平頭 ✂️", "雙色挑染 🌈", "美式前刺 🦔", "金髮男神 💛"] }
+        { q: "🍹 如果今天考試滿分，會選以下哪一杯手搖獎勵自己呢？", options: ["八曜牧場307 🥛🐄", "茶湯會金桂觀音珍珠拿鐵 🍵🧋", "林三凍檸茶 🍋🧊", "八曜 柚迷人 😍🍊", "一沐日桂花粉粿檸檬 🌼🍋", "午後時光的奶茶 ☕"] },
+        { q: "😈 如果 5xN 臨時爽約（而且理由超爛），你最想怎麼懲罰他呢？", options: ["表面沒事～但心裡記一筆～下次默默算帳 😌🧾", "逼他請飲料，然後當場原諒他～ 🧋🤝", "發限時動態／Retro 讓全世界知道他爽約～大家一起公審 📱🔥"] },
+        { q: "🏝️ 如果被丟到孤島，只能帶一樣東西，你會帶？", options: ["超哥沒有充電的電動牙刷 🪥⚡", "跟吳承恩的情侶檸檬泳褲 🍋🩳", "一碗「安姆士」的招牌養生拌飯 🍚🥗"] },
+        { q: "🎲 猜拳輸了～願賭服輸的你，如果必須接受一個懲罰，會選哪一個？", options: ["穿全綠套裝一整天 🟢👕", "兩個禮拜不能喝手搖 🚫🧋", "由吳承恩教學，一起跳 3 首女團舞 💃🎶"] },
+        { q: "🌋 以下哪一個事件最有可能讓你火山爆發、心情不好（生氣）？", options: ["吳承恩遲到 2 小時後一起去吃飯，還吃了 3 小時 ⏰😤", "超哥約好一起做報告，但他都在睡覺 😴📄", "車子準備停車的時候被別人撞到擦傷 🚗💥"] },
+        { q: "🌙 半夜群組突然叮咚叮咚很吵～訊息不停歇，你的內心 OS？", options: ["吳承恩是不是又在群組耍帥了，我要拔刀 🔪😠", "超哥感覺又被公幹了，按笑臉表符看戲 😂🍿", "可能是張馨／呂宜甄在約飯局～？ 🍽️👀", "應該是露比在分享好吃的 IG 美食吧！ 📸🍰"] },
+        { q: "🧋 點手搖的時候，你最不能接受的是哪一個？", options: ["甜度不對，一分糖變成七分糖 🍬❌", "點了檸檬品項，但檸檬曠課 🍋🚫", "珍珠自動被換成波霸 ⚫🔄"] },
+        { q: "🏊‍♂️ 泳訓的時候最不想游哪一個菜單？", options: ["施教練的菜單＋重訓 💪🥵", "甲組的魔鬼訓練菜單 👿🔥", "4/1 的愚人節菜單 🤡📅", "帶班當一天全職經理 📋😵"] },
+        { q: "😱💬 聽到什麼八卦會讓你驚掉下巴？", options: ["吳承恩是蓋 🤯🏳️‍🌈", "超哥深深地愛上你 😍💘", "聽到自己已熱戀中 💖🔥", "吳承恩已密謀許久向你求婚 💍😳"] },
+        { q: "🧢 如果今天一定要選一頂泳帽，你會選？", options: ["戴上後直接變成一顆檸檬🍋的泳帽 🍋😆", "有旗的鯊魚泳帽 🦈🚩", "戴上後變成一顆網球🎾的泳帽 🎾😎"] },
+        { q: "⚡🏠 如果今天宿舍停電，超哥準備來你們房間，你會……", options: ["一秒鎖門，無情拒絕超哥進入 🔒😶", "超哥要開 20 個超緊瓶蓋才可進入 🫙💥", "超哥毫不猶豫簽下「永久幫忙除蟲」契約 🪳✍️", "門口跳《Overdrive》副歌後讓他進來 🎤🕺"] },
+        { q: "💇✨ 如果必須要挑戰一個新髮型，你會選擇？", options: ["重返高中和兄弟們的平頭髮型 ✂️😎", "呂宜甄的雙色挑染 🌈🔥", "旺仔同款的美式前刺 🇺🇸🦔", "變身最耀眼的金髮男神 💛👑"] }
     ];
 
-    const finalResults = [
-        { name: "林三凍檸茶", desc: "你是林三凍檸茶的 VVVVIP！清新但有原則。" },
-        { name: "星太郎超[寬]條餅", desc: "擁有太平洋寬肩，給人十足安全感。" },
-        { name: "生乳捲", desc: "工工卷哥，不捲也能拿書卷，實力擔當。" },
-        { name: "日曆", desc: "跟變頻冷氣一樣高冷，高效穩定的存在。" },
-        { name: "筷子", desc: "效率極高，卻願意為了朋友慢下來等待。" },
-        { name: "樂事 (香菜口味)", desc: "品味獨特，你是人群中最亮眼的香菜知音。" }
+   const finalResults = [
+        { name: "林三凍檸茶", desc: "你是每日報到林三買凍檸茶的 VVVVIP！就像凍檸茶一樣，你給人清新、解膩的感覺，雖然偶爾有一點酸度（原則），但絕對是大家最愛的消暑良藥。" },
+        { name: "星太郎超[寬]條餅", desc: "擁有太平洋寬肩的男人！內在性格厚實有層次，給身邊的朋友帶來極大的安全感。雖然外表可能有點硬，但相處久了發現你既香又脆，超級可靠。" },
+        { name: "生乳捲", desc: "不用卷也可以拿書卷的工工卷哥！你的智商與努力達到完美平衡，就像生乳捲的比例。表面柔軟溫和，內在卻有豐富的乾貨，是大家崇拜的卷哥。" },
+        { name: "日曆", desc: "跟日曆變頻冷氣一樣高冷的男子。你專注於自己的節奏與節能，不隨便浪費情緒，但在最關鍵的時刻，你提供的溫控與穩定是大家最依賴的動力。" },
+        { name: "筷子", desc: "吃飯很快並善於等待吳承恩吃飯的人。你是最具備耐心與直率基因的人，性格簡單明瞭。雖然自己效率極高，卻願意為了朋友放慢速度，是最佳夥伴。" },
+        { name: "樂事 (香菜口味)", desc: "樂事香菜口味的知音。你的品味極具獨特性，完全不在乎大眾眼光。雖然有時讓人摸不透，但一旦懂你的人，就會深深愛上你這種靈魂香氣。" }
     ];
 
-    let currentSession = [];
-    let currentIndex = 0;
-    let score = 0;
-    let userName = "";
-    let selectedChoices = []; // 紀錄玩家選了什麼
+    let currentSession = [], currentIndex = 0, score = 0, userName = "", history = [];
 
-    function renderUI(state) {
+    function render(state) {
         const ui = document.getElementById('game-ui');
-        ui.innerHTML = '';
-        ui.className = 'fade-in';
-
+        ui.innerHTML = ''; ui.className = 'fade-in';
         if (state === 'cover') {
             ui.innerHTML = `
-                <div class="welcome-text">WELCOME_TO_STATION...</div>
+                <div class="welcome-anim">WELCOME_TO_STATION...</div>
                 <h1 class="main-title">餓了吧~~</h1>
-                <p style="color:var(--neon-green); font-size:0.9rem;">🎮 1.21限定・28的闖關測驗</p>
-                <p style="line-height:1.6; font-size:0.9rem;">請帶著愉快心情開啟<br>多重賽道 × 命運爬梯</p>
-                <p style="color:#888; font-size:0.8rem; margin:1.5rem 0;">⚠️ 請誠實回答到最後一頁</p>
-                <div style="margin-bottom:1.5rem; letter-spacing:2px;">Take your mark</div>
-                <button class="option-btn" style="text-align:center" onclick="renderUI('name')">[ GO! ]</button>
+                <p style="color:var(--neon-green); font-size:0.95rem; margin-bottom:1.5rem;">🎮 1.21限定・28的闖關測驗</p>
+                <p style="line-height:1.7; font-size:0.9rem;">開啟這多重賽道 × 命運爬梯<br><span style="color:#888;">⚠️ 請誠實回答到最後一頁ㄛ</span></p>
+                <div style="margin:2rem 0; letter-spacing:2px; font-weight:bold;">Take your mark</div>
+                <button class="option-btn" style="text-align:center" onclick="render('name')">[ GO! ]</button>
             `;
         } else if (state === 'name') {
             ui.innerHTML = `
-                <h2>嗨~請輸入你的名字?</h2>
-                <input type="text" id="nameInput" class="input-name-field" placeholder="INPUT_NAME...">
-                <button class="option-btn" style="text-align:center" onclick="saveName()">[ START ]</button>
+                <h2>嗨~請幫我輸入你的名字?</h2>
+                <input type="text" id="nIn" class="input-field" placeholder="ID_IDENTIFICATION...">
+                <button class="option-btn" style="text-align:center" onclick="saveN()">[ START ]</button>
             `;
         } else if (state === 'quiz') {
             const q = currentSession[currentIndex];
             document.getElementById('progress-fill').style.width = `${(currentIndex / 6) * 100}%`;
             ui.innerHTML = `
-                <div style="font-size:0.7rem; color:var(--neon-green);">LOG: SESSION_0${currentIndex+1}</div>
-                <h2 style="font-size:1.1rem;">${q.q}</h2>
+                <div style="font-size:0.7rem; color:var(--neon-green); margin-bottom:0.5rem;">LOG_SEQUENCE: 0${currentIndex+1}/06</div>
+                <h2>${q.q}</h2>
                 ${q.options.map((o, i) => `<button class="option-btn" onclick="next(${i})">${o}</button>`).join('')}
             `;
         } else if (state === 'result') {
             const res = finalResults[score % 6];
-            document.getElementById('progress-fill').style.width = `100%`;
-            
-            // 巧妙地將選項轉化為祝福
-            const review = selectedChoices.map(c => c.split(' ')[0]).join('、');
-            
+            document.getElementById('progress-fill').style.width = "100%";
+            // 提取關鍵字做回顧
+            const reviewStr = history.map(h => h.split(' ')[0]).join('、');
             ui.innerHTML = `
                 <div style="color:var(--neon-green); font-size:0.7rem;">ANALYSIS_COMPLETE</div>
-                <h1 style="color:var(--neon-green); margin:0.5rem 0;">你是：${res.name}</h1>
-                <p style="line-height:1.6;">${res.desc}</p>
+                <div style="margin-top:1.5rem; text-align:center;">${userName}，測驗結果分析：你是...</div>
+                <div class="result-name-big">${res.name}</div>
+                <p style="line-height:1.8; color:#ccc; border-top:1px solid #333; padding-top:1rem;">${res.desc}</p>
+                
                 <div class="summary-box">
-                    <strong>📊 本次測驗回顧：</strong><br>
-                    ${userName} 在過程中選擇了「${review}」等精彩路徑。<br><br>
-                    <strong>✨ 生日祝福矩陣：</strong><br>
-                    在新的一歲裡，願你保有選 <strong>${selectedChoices[0]}</strong> 的那份初心，
-                    即使遇到 <strong>${selectedChoices[4]}</strong> 這種鳥事也能一笑置之。
-                    願生活像 <strong>${selectedChoices[2]}</strong> 一樣精彩，
-                    就像大家對你的愛一樣，永遠是 VVVVIP 級別的喔！
+                    <strong style="color:var(--neon-green);">📊 作答矩陣回顧：</strong><br>
+                    在這次測驗中，你選擇了「${reviewStr}」等路徑。這反映出你在面對 5xN 爽約或超哥除蟲時，有著獨特的應對邏輯。
                 </div>
-                <button class="option-btn" style="text-align:center; margin-top:2rem;" onclick="location.reload()">RE-DECODE</button>
+
+                <div class="summary-box">
+                    <strong style="color:var(--neon-green);">✨ 生日祝福模組：</strong><br>
+                    願你在 28 歲這年，保有選 <strong>${history[0]}</strong> 的那份快樂！即使遇到類似 <strong>${history[2]}</strong> 這種選擇困難，或 <strong>${history[4]}</strong> 這種火山爆發的事，都能像 <strong>${res.name}</strong> 一樣帥氣應對。生日快樂！
+                </div>
+
+                <button class="option-btn" style="text-align:center; margin-top:2rem;" onclick="location.reload()">SYSTEM_RESTART</button>
             `;
         }
     }
 
-    window.saveName = () => {
-        userName = document.getElementById('nameInput').value || "挑戰者";
+    window.saveN = () => {
+        userName = document.getElementById('nIn').value || "挑戰者";
         currentSession = [...questions].sort(() => Math.random() - 0.5).slice(0, 6);
-        renderUI('quiz');
+        render('quiz');
     };
 
     window.next = (i) => {
-        selectedChoices.push(currentSession[currentIndex].options[i]);
-        score += i;
-        currentIndex++;
-        if (currentIndex < 6) renderUI('quiz');
-        else renderUI('result');
+        history.push(currentSession[currentIndex].options[i]);
+        score += i; currentIndex++;
+        if (currentIndex < 6) render('quiz');
+        else render('result');
     };
 
-    renderUI('cover');
+    render('cover');
 </script>
 </body>
 </html>
