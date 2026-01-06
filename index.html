@@ -232,7 +232,6 @@
             const reviewStr = history.map(h => h.split(' ')[0]).join('、');
             ui.innerHTML = `
                 <div class="analysis-anim">ANALYSIS_COMPLETE</div>
-                <div style="margin-top:1.5rem; text-align:center; font-size:0.9rem; color:var(--neon-green);">記得把這一頁的結果[截圖]分享到 \\餓了吧/ 群組解鎖更多隱藏線索哦~</div>
                 <div style="margin-top:1.5rem; text-align:center;">嗨${userName}，測驗結果分析：你是...</div>
                 <div class="result-name-big">${res.name}</div>
                 <p style="line-height:1.8; color:#ccc; border-top:1px solid #333; padding-top:1rem;">${res.desc}</p>
@@ -280,6 +279,7 @@
 </script>
 </body>
 </html>
+
 
 
 
