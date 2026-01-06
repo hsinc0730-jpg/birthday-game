@@ -185,7 +185,7 @@
         { name: "林三凍檸茶", desc: "你是每日報到林三買凍檸茶的 VVVVIP！就像凍檸茶一樣，你給人清新、解膩的感覺，雖然偶爾有一點酸度（原則），但絕對是大家最愛的消暑良藥。" },
         { name: "星太郎超[寬]條餅", desc: "擁有太平洋寬肩的男人！內在性格厚實有層次，給身邊的朋友帶來極大的安全感。雖然外表可能有點硬，但相處久了發現你既香又脆，超級可靠。" },
         { name: "生乳捲", desc: "不用卷也可以拿書卷的工工卷哥！你的智商與努力達到完美平衡，就像生乳捲的比例。表面柔軟溫和，內在卻有豐富的乾貨，是大家崇拜的卷哥。" },
-        { name: "日曆", desc: "跟日曆變頻冷氣一樣高冷的男子。你專注於自己的節奏與節能，不隨便浪費情緒，但在最關鍵的時刻，你提供的溫控與穩定是大家最依賴的動力。" },
+        { name: "日曆", desc: "跟日立變頻冷氣一樣高冷的男子。你專注於自己的節奏與節能，不隨便浪費情緒，但在最關鍵的時刻，你提供的溫控與穩定是大家最依賴的動力。" },
         { name: "筷子", desc: "吃飯很快並善於等待吳承恩吃飯的人。你是最具備耐心與直率基因的人，性格簡單明瞭。雖然自己效率極高，卻願意為了朋友放慢速度，是最佳夥伴。" },
         { name: "樂事 (香菜口味)", desc: "樂事香菜口味的知音。你的品味極具獨特性，不因大眾眼光而隨波逐流。雖然有時讓人摸不透，但一旦懂你的人，就會深深迷上你這種靈魂香氣。" }
     ];
@@ -201,8 +201,8 @@
             ui.innerHTML = `
                 <div class="welcome-anim">WELCOME_TO_STATION...</div>
                 <h1 class="main-title">歡迎來到餓了吧~</h1>
-                <p style="color:var(--neon-green); font-size:0.95rem; margin-bottom:1.5rem;">🎮 1.21今日限定28hr・闖關測驗</p>
-                <p style="line-height:1.7; font-size:0.9rem;">請帶著愉悅輕鬆的心情開啟這個<br>多重賽道 × 命運爬梯<br><span style="color:#888;">⚠️ 請誠實回答~並耐心地玩到最後一頁ㄛ</span></p>
+                <p style="color:var(--neon-green); font-size:0.95rem; margin-bottom:1.5rem;">🎮 1.21今日限定20hr・限時開放～餓到為止</p>
+                <p style="line-height:1.7; font-size:0.9rem;">系統偵測到：目前挑戰者為本日壽星🎂<br>壽星專屬路線載入中⋯<br>請帶著輕鬆愉悅的心情向前進～<br>這不是考試～也沒有標準答案哦：）<span style="color:#888;">⚠️ 請誠實回答~並耐心地玩到最後一頁ㄛ</span></p>
                 <div style="margin:2rem 0; letter-spacing:2px; font-weight:bold;">Take your mark!Ready~</div>
                 <button class="option-btn" style="text-align:center" onclick="render('name')">[ GO! ]</button>
             `;
@@ -237,7 +237,7 @@
 
                 <div class="summary-box">
                     <strong style="color:var(--neon-green);">✨ 餓了吧的生日祝福：</strong><br>
-                    願你在 28 歲這年，保有選 <strong>${history[0]}</strong> 的那份快樂！即使遇到類似 <strong>${history[2]}</strong> 這種選擇困難，或 <strong>${history[4]}</strong> 這種火山爆發的事，都能像 <strong>${res.name}</strong> 一樣帥氣應對。餓了吧的塞車工廠團隊在此祝遠在澳洲的你~生日快樂！
+                    願你在 28 歲這年，保有選 <strong>${history[0]}</strong> 的那份快樂！即使遇到類似 <strong>${history[2]}</strong> 這種選擇困難，或 <strong>${history[4]}</strong> 這種火山爆發的事，都能像 <strong>${res.name}</strong> 一樣帥氣應對。餓了吧的塞車工廠團隊在此祝遠在澳洲的你~二十歲生日快樂happy birthday 🎉
                 </div>
 
                 <div class="traffic-jam-container">
@@ -271,4 +271,5 @@
 </script>
 </body>
 </html>
+
 
